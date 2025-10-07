@@ -19,7 +19,10 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::orderByDesc('created_at')->whereIn('status', ['new', 'process'])->paginate(10);
+        $orders = Order::where('status', '!=', 'completed')
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
         return view('orders.index', compact('orders'));
     }
 
@@ -105,23 +108,6 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->status = $request->status;
         $order->save();
-        $transaction = $order->transaction;
-        if ($request->status === 'completed') {
-            if (!$transaction) {
-                $transaction = Transaction::create([
-                    'order_id' => $order->id,
-                    'total' => $order->orderDetails->sum(function ($detail) {
-                        return $detail->product->price * $detail->quantity;
-                    }),
-                    'payment_status' => 'pending',
-                    'payment_method' => null,
-                ]);
-            }
-        } else {
-            if ($transaction) {
-                $transaction->delete();
-            }
-        }
         History::create([
             'user_id' => Auth::user()->id,
             'action' => 'update',
@@ -130,6 +116,20 @@ class OrderController extends Controller
             'description' => 'Order ID '.$order->id.' status updated to '.$request->status.' by user '.Auth::user()->username,
         ]);
         return redirect()->route('orders.index')->with('success', 'Order ID '.$order->id.' status updated to '.$request->status);
+    }
+    public function complete(Request $request, $id){
+        $order = Order::findOrFail($id);
+        $order->status = 'completed';
+        Transaction::create([
+            'order_id' => $order->id,
+            'total' => $order->orderDetails->sum(function ($detail) {
+                return $detail->product->price * $detail->quantity;
+            }),
+            'payment_status' => 'pending',
+            'payment_method' => null,
+        ]);
+        $order->save();
+        return redirect()->route('orders.index')->with('success', 'Order ID ' . $order->id . ' was completed.');
     }
 
     /**
