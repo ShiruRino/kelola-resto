@@ -2,8 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Transaction;
+use Auth;
 use App\Models\Order;
+use App\Models\History;
+use App\Models\Product;
+use App\Models\Customer;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
@@ -12,7 +19,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $customers = Order::orderByDesc('created_at')->paginate(10);
+        $orders = Order::orderByDesc('created_at')->whereIn('status', ['new', 'process'])->paginate(10);
+        return view('orders.index', compact('orders'));
     }
 
     /**
@@ -20,7 +28,8 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        $products = Product::orderBy('name')->get();
+        return view('orders.create', compact('products'));
     }
 
     /**
@@ -28,7 +37,41 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'table_number' => 'required',
+            'customer_phone' => 'required|exists:customers,phone',
+            'product' => 'required|array|min:1',
+            'product.*' => 'exists:products,id',
+            'quantity' => 'required|array|min:1',
+            'quantity.*' => 'integer|min:1'
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if($validator->fails()){
+            return back()->withInput()->withErrors($validator);
+        }
+        $customer = Customer::where('phone', $request->customer_phone)->first();
+        $order = Order::create([
+            'table_number' => $request->table_number,
+            'customer_id' => $customer->id,
+            'status' => 'new',
+            'user_id' => Auth::id(),
+        ]);
+
+        foreach ($request->product as $index => $productId) {
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'product_id' => $productId,
+                'quantity' => $request->quantity[$index],
+            ]);
+        }
+        History::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'create',
+            'table_name' => 'orders',
+            'record_id' => Order::latest()->first()->id,
+            'description' => 'Order created by user '.Auth::user()->username,
+        ]);
+        return redirect()->route('orders.index')->with('success', 'Order created');
     }
 
     /**
@@ -36,7 +79,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        return view('orders.show', compact('order'));
     }
 
     /**
@@ -44,15 +87,49 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+        return view('orders.edit', compact('order'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order)
+    public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'status' => 'required|in:new,process,ready,completed,cancelled',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if($validator->fails()){
+            return back()->withInput()->withErrors($validator);
+        }
+        $order = Order::findOrFail($id);
+        $order->status = $request->status;
+        $order->save();
+        $transaction = $order->transaction;
+        if ($request->status === 'completed') {
+            if (!$transaction) {
+                $transaction = Transaction::create([
+                    'order_id' => $order->id,
+                    'total' => $order->orderDetails->sum(function ($detail) {
+                        return $detail->product->price * $detail->quantity;
+                    }),
+                    'payment_status' => 'pending',
+                    'payment_method' => null,
+                ]);
+            }
+        } else {
+            if ($transaction) {
+                $transaction->delete();
+            }
+        }
+        History::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'update',
+            'table_name' => 'orders',
+            'record_id' => $order->id,
+            'description' => 'Order ID '.$order->id.' status updated to '.$request->status.' by user '.Auth::user()->username,
+        ]);
+        return redirect()->route('orders.index')->with('success', 'Order ID '.$order->id.' status updated to '.$request->status);
     }
 
     /**
@@ -60,6 +137,14 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        History::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'delete',
+            'table_name' => 'orders',
+            'record_id' => $order->id,
+            'description' => 'Order ID '.$order->id.' deleted by user '.Auth::user()->username,
+        ]);
+        $order->delete();
+        return redirect()->route('orders.index')->with('success', 'Order ID '.$order->id.' deleted');
     }
 }

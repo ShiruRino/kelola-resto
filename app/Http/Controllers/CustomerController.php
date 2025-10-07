@@ -77,7 +77,7 @@ class CustomerController extends Controller
         $rules = [
             'name' => 'required',
             'gender' => 'required|boolean',
-            'phone' => 'required|unique:customers,phone,',
+            'phone' => 'required|unique:customers,phone,' . $customer->id   ,
             'address' => 'required',
         ];
         $validator = Validator::make($request->all(), $rules);

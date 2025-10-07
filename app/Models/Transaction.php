@@ -8,6 +8,6 @@ class Transaction extends Model
 {
     protected $fillable = ['order_id', 'total', 'payment'];
     public function order(){
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class, 'order_id');
     }
 }

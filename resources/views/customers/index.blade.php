@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Dashboard')
 @section('content')
-<a href="{{route('customers.create')}}" class="btn btn-success mt-5 mb-4">Create</a>
+<a href="{{route('customers.create')}}" class="btn btn-success mt-5 mb-4 btn-sm">Create</a>
 @if (session('success'))
 <div class="alert alert-success">
     {{ session('success') }}

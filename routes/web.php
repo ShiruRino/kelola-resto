@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function() {
     })->name('index');
     Route::resource('customers', CustomerController::class);
     Route::resource('products', ProductController::class);
+    Route::put('orders/{id}',[ OrderController::class, 'complete'])->name('orders.complete');
     Route::resource('orders', OrderController::class);
     Route::resource('transactions', TransactionController::class);
     Route::resource('histories', HistoryController::class);

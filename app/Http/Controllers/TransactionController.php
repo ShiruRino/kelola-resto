@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,8 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+        $transactions = Transaction::orderByDesc('created_at')->paginate(10);
+        return view('transactions.index', compact('transactions'));
     }
 
     /**
@@ -20,7 +22,7 @@ class TransactionController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -28,7 +30,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // $rules =
     }
 
     /**

@@ -8,7 +8,7 @@
     <a href="{{ route('customers.index') }}" class="nav-link">Manage Customers</a>
     <a href="{{ route('orders.index') }}" class="nav-link">Manage Orders</a>
     <a href="{{ route('transactions.index') }}" class="nav-link">Manage Transactions</a>
-    <a href="{{ route('histories.index') }}" class="nav-link">Manage Histories</a>
+    <a href="{{ route('histories.index') }}" class="nav-link">Activity Logs</a>
     <form action="{{ route('auth.logout') }}" method="POST" class="mt-3" onsubmit="return confirm('Are you sure you want to logout?')">
         @csrf
         <button class="btn btn-danger w-100" type="submit">Logout</button>

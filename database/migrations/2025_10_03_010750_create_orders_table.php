@@ -13,10 +13,25 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products');
+            $table->string('table_number');
             $table->foreignId('customer_id')->constrained('customers');
-            $table->integer('quantity');
+            $table->enum('status', ['new', 'process','ready','completed']);
             $table->foreignId('user_id')->constrained('users');
+            $table->timestamps();
+        });
+        Schema::create('order_details', function (Blueprint $table) {
+            $table->id('id');
+            $table->foreignId('order_id')->constrained('orders', 'id')->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained('products', 'id');
+            $table->integer('quantity');
+            $table->timestamps();
+        });
+        Schema::create('transactions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
+            $table->decimal('total', 10, 2);
+            $table->enum('payment_status', ['paid', 'pending', 'failed'])->default('pending');
+            $table->enum('payment_method', ['cash', 'credit_card', 'debit_card', 'mobile'])->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +41,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('order_details');
         Schema::dropIfExists('orders');
     }
 };
