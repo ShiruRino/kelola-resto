@@ -6,6 +6,7 @@
     <a href="{{ route('index') }}" class="nav-link">Dashboard</a>
     <a href="{{ route('products.index') }}" class="nav-link">Manage Products</a>
     <a href="{{ route('customers.index') }}" class="nav-link">Manage Customers</a>
+    <a href="{{ route('tables.index') }}" class="nav-link">Manage Tables</a>
     <a href="{{ route('orders.index') }}" class="nav-link">Manage Orders</a>
     <a href="{{ route('transactions.index') }}" class="nav-link">Manage Transactions</a>
     <a href="{{ route('histories.index') }}" class="nav-link">Activity Logs</a>

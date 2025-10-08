@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TableController;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Customer;
@@ -29,6 +30,7 @@ Route::middleware('auth')->group(function() {
     Route::resource('customers', CustomerController::class);
     Route::resource('products', ProductController::class);
     Route::put('orders/{id}',[ OrderController::class, 'complete'])->name('orders.complete');
+    Route::resource('tables', TableController::class);
     Route::resource('orders', OrderController::class);
     Route::resource('transactions', TransactionController::class);
     Route::resource('histories', HistoryController::class);

@@ -15,7 +15,9 @@
             padding: 0;
             height: 100%;
         }
-
+        .hidden{
+            display: none;
+        }
         @media (min-width: 992px) {
             body {
                 display: grid;
