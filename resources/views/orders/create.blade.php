@@ -1,14 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Create Order')
 @section('content')
-<a href="{{route('orders.index')}}" class="btn btn-danger mt-5 mb-4 btn-sm">Back</a>
-@if ($errors->any())
-<div class="alert alert-danger mb-4">
-    @foreach ($errors->all() as $error)
-    <li>{{$error}}</li>
-    @endforeach
-</div>
-@endif
+<a href="{{route('orders.index')}}" class="btn btn-danger mb-4 btn-sm">Back</a>
 <div class="card mb-5">
     <div class="card-header">Create Order</div>
     <div class="card-body">
@@ -17,7 +10,7 @@
             @method('POST')
             <div class="mb-3">
                 <label for="table_number" class="form-label">Table Number</label>
-                <input type="number" class="form-control" name="table_number" value="{{old('table_number')}}" placeholder="Table Number" required>
+                <input type="text" class="form-control" name="table_number" value="{{old('table_number')}}" placeholder="Table Number" required>
             </div>
             <div class="mb-3">
                 <label for="customer_id" class="form-label">Customer</label>

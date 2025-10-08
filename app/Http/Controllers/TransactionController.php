@@ -68,6 +68,11 @@ class TransactionController extends Controller
         $transaction->payment_status = $request->payment_status;
         $transaction->payment_method = $request->payment_method;
         $transaction->save();
+        if( $request->payment_status == 'paid' ){
+            $order = Order::find($transaction->order_id);
+            $order->status = 'completed';
+            $order->save();
+        }
         History::create([
             'user_id' => Auth::user()->id,
             'action' => 'update',
@@ -75,7 +80,7 @@ class TransactionController extends Controller
             'record_id' => $transaction->id,
             'description' => 'Transaction ID '.$transaction->id.' updated',
         ]);
-        return redirect()->route('transactions.index')->with('success', 'Transaction updated successfully.');
+        return redirect()->route('tables.show', $transaction->order->table->id)->with('success', 'Transaction updated successfully.');
     }
 
     /**
@@ -89,6 +94,6 @@ class TransactionController extends Controller
         }
         $order->delete();
         $transaction->delete();
-        return redirect()->route('transactions.index')->with('success', 'Transaction and associated order details deleted successfully.');
+        return redirect()->route('tables.index')->with('success', 'Transaction and associated order details deleted successfully.');
     }
 }

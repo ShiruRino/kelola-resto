@@ -2,23 +2,13 @@
 @section('title', 'Dashboard')
 @section('content')
 <a href="{{route('orders.create')}}" class="btn btn-success mt-5 mb-4 btn-sm">Create</a>
-@if (session('success'))
-<div class="alert alert-success mb-4">{{session('success')}}</div>
-@endif
-@if ($errors->any())
-@foreach ($errors->all() as $error)
-<div class="alert alert-danger mb-4">
-    {{$error}}
-</div>
-@endforeach
-@endif
 <div class="card mb-5">
     <div class="card-header">Orders</div>
     <div class="card-body">
         <table class="table">
             <thead>
                 <tr>
-                    <th>No</th>
+                    <th scope='col'>#</th>
                     <th>Table Number</th>
                     <th>Customer Name</th>
                     <th>Order Date</th>
@@ -30,7 +20,7 @@
                 @foreach ($orders as $i)
                 <tr>
                     <td>{{$loop->iteration}}</td>
-                    <td>{{$i->table_number}}</td>
+                    <td>{{$i->table->table_number}}</td>
                     <td>{{$i->customer->name}}</td>
                     <td>{{\Carbon\Carbon::parse($i->created_at)->format('d-m-Y H:i')}}</td>
                     <td>

@@ -2,11 +2,6 @@
 @section('title', 'Dashboard')
 @section('content')
 <a href="{{route('products.create')}}" class="btn btn-success mt-5 mb-4 btn-sm">Create</a>
-@if (session('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
-</div>
-@endif
 <div class="card mt-4 mb-5">
     <div class="card-header">Products</div>
     <div class="card-body">

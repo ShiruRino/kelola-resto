@@ -7,13 +7,6 @@
     {{session('success')}}
 </div>
 @endif
-@if ($errors->any())
-@foreach ($errors->all() as $i)
-<div class="alert alert-danger mb-4">
-    {{$i}}
-</div>
-@endforeach
-@endif
 <div class="card mb-5">
     <div class="card-header">{{'Transaction ' . $transaction->id . ' - ' . $transaction->order->customer->name}}</div>
     <div class="card-body">

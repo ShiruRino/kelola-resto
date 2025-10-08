@@ -3,23 +3,13 @@
 @section('content')
 <a class="btn btn-success btn-sm mt-5 mb-4">Create</a>
 
-@if (session('success'))
-    <div class="alert alert-success mb-4">{{ session('success') }}</div>
-@endif
-
-@if ($errors->any())
-    @foreach ($errors->all() as $error)
-        <div class="alert alert-danger mb-4">{{ $error }}</div>
-    @endforeach
-@endif
-
 <div class="card">
     <div class="card-header">Tables</div>
     <div class="card-body">
         <table class="table">
             <thead>
                 <tr>
-                    <th>No</th>
+                    <th scope='col'>#</th>
                     <th>Table Number</th>
                     <th>Seats</th>
                     <th>Status</th>

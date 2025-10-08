@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
 use Auth;
 use App\Models\Order;
+use App\Models\Table;
 use App\Models\History;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\OrderDetail;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -52,14 +53,16 @@ class OrderController extends Controller
         if($validator->fails()){
             return back()->withInput()->withErrors($validator);
         }
+        $table = Table::where('table_number', $request->table_number)->firstOrFail();
         $customer = Customer::where('phone', $request->customer_phone)->first();
         $order = Order::create([
-            'table_number' => $request->table_number,
+            'table_id' => $table->id,
             'customer_id' => $customer->id,
             'status' => 'new',
             'user_id' => Auth::id(),
         ]);
-
+        $table->status = 'unavailable';
+        $table->save();
         foreach ($request->product as $index => $productId) {
             OrderDetail::create([
                 'order_id' => $order->id,
@@ -67,6 +70,12 @@ class OrderController extends Controller
                 'quantity' => $request->quantity[$index],
             ]);
         }
+        Transaction::create([
+            'order_id' => $order->id,
+            'total' => 0,
+            'payment_status' => 'pending',
+            'payment_method' => null,
+        ]);
         History::create([
             'user_id' => Auth::user()->id,
             'action' => 'create',
@@ -74,7 +83,7 @@ class OrderController extends Controller
             'record_id' => Order::latest()->first()->id,
             'description' => 'Order created by user '.Auth::user()->username,
         ]);
-        return redirect()->route('orders.index')->with('success', 'Order created');
+        return redirect()->route('tables.show', $table->id)->with('success', 'Order created');
     }
 
     /**
@@ -115,21 +124,7 @@ class OrderController extends Controller
             'record_id' => $order->id,
             'description' => 'Order ID '.$order->id.' status updated to '.$request->status.' by user '.Auth::user()->username,
         ]);
-        return redirect()->route('orders.index')->with('success', 'Order ID '.$order->id.' status updated to '.$request->status);
-    }
-    public function complete(Request $request, $id){
-        $order = Order::findOrFail($id);
-        $order->status = 'completed';
-        Transaction::create([
-            'order_id' => $order->id,
-            'total' => $order->orderDetails->sum(function ($detail) {
-                return $detail->product->price * $detail->quantity;
-            }),
-            'payment_status' => 'pending',
-            'payment_method' => null,
-        ]);
-        $order->save();
-        return redirect()->route('orders.index')->with('success', 'Order ID ' . $order->id . ' was completed.');
+        return redirect()->route('tables.show', $order->table->id)->with('success', 'Order ID '.$order->id.' status updated to '.$request->status);
     }
 
     /**

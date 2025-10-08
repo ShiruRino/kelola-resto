@@ -2,11 +2,6 @@
 @section('title', 'Edit Customer')
 @section('content')
 <a href="{{route('customers.index')}}" class="btn btn-danger mt-5 mb-4 btn-sm">Back</a>
-@if ($errors->any())
-@foreach ($errors->all() as $i)
-<div class="alert alert-danger mb-4">{{$i}}</div>
-@endforeach
-@endif
 <div class="card mb-5">
     <div class="card-header">Edit Customer</div>
     <div class="card-body">
@@ -20,9 +15,8 @@
             <div class="mb-3">
                 <label for="gender" class="form-label">Gender</label>
                 <select class="form-select" name="gender">
-                    <option value="">Select Gender</option>
-                    <option value="0" {{$customer->gender || old('gender') ? 'selected' : ''}}>Male</option>
-                    <option value="1" {{!$customer->gender || !old('gender') ? 'selected' : ''}}>Female</option>
+                    <option value="0" {{!$customer->gender ? 'selected' : ''}}>Male</option>
+                    <option value="1" {{$customer->gender ? 'selected' : ''}}>Female</option>
                 </select>
             </div>
             <div class="mb-3">

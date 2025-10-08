@@ -10,4 +10,8 @@ class Table extends Model
     protected $fillable = [
         'table_number', 'seats', 'status', 'location',
     ];
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'table_id');
+    }
 }

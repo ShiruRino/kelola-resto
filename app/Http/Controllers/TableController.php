@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\History;
+use App\Models\Order;
 use App\Models\Table;
 use Auth;
 use Illuminate\Http\Request;
@@ -39,9 +40,13 @@ class TableController extends Controller
      * Display the specified resource.
      */
     public function show(Table $table)
-    {
-        //
-    }
+{
+
+    // Pass the variables to the view
+    return view('tables.show', compact('table'));
+}
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -66,7 +71,6 @@ class TableController extends Controller
             return back()->withInput()->withErrors($validator);
         }
         if($table->seats != $request->seats){
-            $table->seats = $request->seats;
             History::create([
                 'user_id' => Auth::id(),
                 'action' => 'update',
@@ -76,7 +80,6 @@ class TableController extends Controller
             ]);
         }
         if($table->status != $request->status){
-            $table->status = $request->status;
             History::create([
                 'user_id' => Auth::id(),
                 'action' => 'update',
@@ -93,9 +96,8 @@ class TableController extends Controller
                 'record_id' => $table->id,
                 'description' => 'Table '.$table->table_number.' location updated to '.$table->location,
             ]);
-            $table->location = $request->location;
         }
-        $table->save();
+        $table->update($request->only('seats','status','location'));
         return redirect()->route('tables.index')->with('success', 'Table '.$table->table_number.' updated');
     }
 

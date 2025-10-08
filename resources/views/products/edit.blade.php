@@ -2,11 +2,6 @@
 @section('title', 'Edit Product')
 @section('content')
 <a href="{{route('products.index')}}" class="btn btn-danger mt-5 mb-4 btn-sm">Back</a>
-@if ($errors->any())
-@foreach ($errors->all() as $i)
-<div class="alert alert-danger mb-4">{{$i}}</div>
-@endforeach
-@endif
 <div class="card mb-5">
     <div class="card-header">Edit Product</div>
     <div class="card-body">

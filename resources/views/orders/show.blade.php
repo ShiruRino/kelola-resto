@@ -7,13 +7,22 @@
     <div class="card-body">
         <div class="list-group list-group-flush">
             <div class="list-group-item">
-                Table Number: {{$order->table_number}}
+                Table Number: {{$order->table->table_number}}
             </div>
             <div class="list-group-item">
-                Customer: {{$order->customer_name}}
+                Customer: {{$order->customer->name}}
             </div>
             <div class="list-group-item">
-                Status: {{Str::upper($order->status)}}
+                Status:
+                <form action="{{route('orders.update',$order->id)}}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <select name="status" onchange="this.form.submit()" class="form-select form-select-sm w-auto d-inline">
+                        <option value="new" {{$order->status == 'new' ? 'selected' : ''}}>NEW</option>
+                        <option value="process" {{$order->status == 'process' ? 'selected' : ''}}>PROCESS</option>
+                        <option value="ready" {{$order->status == 'ready' ? 'selected' : ''}}>READY</option>
+                    </select>
+                </form>
             </div>
             <div class="list-group-item">
                 User: {{$order->user->username}}
@@ -27,7 +36,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>No</th>
+                    <th scope='col'>#</th>
                     <th>Product</th>
                     <th>Quantity</th>
                     <th>Price</th>

@@ -96,6 +96,18 @@
 
     <!-- Main Content -->
     <main class="container">
+        @if (session('success'))
+            <div class="alert alert-success mb-4">{{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger mb-4">{{ session('error') }}</div>
+        @endif
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <div class="alert alert-danger mb-4">{{ $error }}</div>
+            @endforeach
+        @endif
         @yield('content')
     </main>
 

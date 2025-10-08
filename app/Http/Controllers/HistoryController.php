@@ -12,7 +12,7 @@ class HistoryController extends Controller
      */
     public function index()
     {
-        $histories = History::orderByDesc('created_at')->get();
+        $histories = History::orderByDesc('created_at')->paginate(10);
         return view('histories.index', compact('histories'));
     }
 

@@ -2,11 +2,6 @@
 @section('title', 'Dashboard')
 @section('content')
 <a href="{{route('customers.create')}}" class="btn btn-success mt-5 mb-4 btn-sm">Create</a>
-@if (session('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
-</div>
-@endif
 <div class="card mt-4 mb-5">
     <div class="card-header">Customers</div>
     <div class="card-body">
@@ -26,7 +21,7 @@
                 <tr>
                     <th scope="row">{{ $loop->iteration }}</th>
                     <td>{{ $customer->name }}</td>
-                    <td>{{ $customer->gender ? 'Male' : 'Female' }}</td>
+                    <td>{{ !$customer->gender ? 'Male' : 'Female' }}</td>
                     <td>{{ $customer->phone }}</td>
                     <td>{{ $customer->address }}</td>
                     <td class="d-flex flex-row flex-wrap" style="gap: 0.5rem;">
