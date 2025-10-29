@@ -10,7 +10,7 @@
             @method('POST')
             <div class="mb-3">
                 <label for="table_number" class="form-label">Table Number</label>
-                <input type="text" class="form-control" name="table_number" value="{{old('table_number')}}" placeholder="Table Number" required>
+                <input type="text" class="form-control" name="table_number" value="{{old('table_number')}}" placeholder="Table Number" require>
             </div>
             <div class="mb-3">
                 <label for="customer_id" class="form-label">Customer</label>
@@ -59,7 +59,6 @@
 
         container.appendChild(newRow);
     });
-
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('remove-row')) {
             const row = e.target.closest('.product-row');

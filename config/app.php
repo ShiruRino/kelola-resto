@@ -1,5 +1,9 @@
 <?php
 
+use Barryvdh\DomPDF\Facade;
+use Barryvdh\DomPDF\ServiceProvider;
+use Dompdf\Dompdf;
+
 return [
 
     /*
@@ -122,5 +126,6 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
 
 ];

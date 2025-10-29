@@ -1,7 +1,9 @@
 @extends('layouts.app')
 @section('title', 'Dashboard')
 @section('content')
-<a class="btn btn-success btn-sm mt-5 mb-4">Create</a>
+@if (Auth::user()->role === 'admin')
+<a href="{{ route('tables.create') }}" class="btn btn-success btn-sm mt-5 mb-4">Create</a>
+@endif
 
 <div class="card">
     <div class="card-header">Tables</div>
@@ -23,6 +25,7 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $i->table_number }}</td>
                         <td>
+                            @if (Auth::user()->role === 'admin')
                             <form action="{{ route('tables.update', $i->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
                                 @csrf
                                 @method('PUT')
@@ -31,8 +34,12 @@
                                     Submit
                                 </button>
                             </form>
+                            @else
+                            {{ $i->seats }}
+                            @endif
                         </td>
                         <td>
+                            @if (Auth::user()->role === 'admin')
                             <form action="{{ route('tables.update', $i->id) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
@@ -41,8 +48,12 @@
                                     <option value="unavailable" {{ $i->status == 'unavailable' ? 'selected' : '' }}>UNAVAILABLE</option>
                                 </select>
                             </form>
+                            @else
+                            {{ Str::upper($i->status) }}
+                            @endif
                         </td>
                         <td>
+                            @if (Auth::user()->role === 'admin')
                             <form action="{{ route('tables.update', $i->id) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
@@ -52,14 +63,19 @@
                                     <option value="vip" {{ $i->location == 'vip' ? 'selected' : '' }}>VIP ROOM</option>
                                 </select>
                             </form>
+                            @else
+                            {{ Str::upper($i->location) }}
+                            @endif
                         </td>
                         <td class="d-flex flex-row flex-wrap" style="gap: 0.5rem;">
                             <a href="{{ route('tables.show', $i->id) }}" class="btn btn-primary btn-sm">Show</a>
+                            @if (Auth::user()->role === 'admin')
                             <form action="{{ route('tables.destroy', $i->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

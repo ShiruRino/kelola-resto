@@ -3,7 +3,7 @@
 @section('title', 'Table ' . $table->table_number)
 
 @php
-$latestOrder = $table->orders()->where('status', '!=', 'completed')->latest()->first();
+$latestOrder = $table->orders()->latest()->first();
 $transaction = $latestOrder ? $latestOrder->transaction : null;
 @endphp
 @section('content')
@@ -15,31 +15,38 @@ $transaction = $latestOrder ? $latestOrder->transaction : null;
             <div class="list-group list-group-flush">
                 <div class="list-group-item">Table Number: {{ $table->table_number }}</div>
                 <div class="list-group-item">Seats: {{ $table->seats }}</div>
-                <div class="list-group-item">Status: {{ $table->status }}</div>
-                <div class="list-group-item">Location: {{ $table->location }}</div>
+                <div class="list-group-item">Status: {{ Str::upper($table->status) }}</div>
+                <div class="list-group-item">Location: {{ Str::upper($table->location) }}</div>
             </div>
         </div>
     </div>
-    @if (!$latestOrder)
-    <a href="{{route('orders.create')}}" class="btn btn-success btn-sm mb-4">Create an Order</a>
+    @if ($transaction === null || $transaction->payment_status === 'paid')
+        @if (Auth::user()->role === 'waiter')
+        <a href="{{route('orders.create')}}" class="btn btn-success btn-sm mb-4">Create an Order</a>
+        @endif
     @endif
+
     <div class="card mb-4">
         <div class="card-header">{{'Order ' . $table->table_number}}</div>
         <div class="card-body">
-                @if ($latestOrder)
+                @if ($latestOrder && $transaction->payment_status !== 'paid')
                     <div class="list-group list-group-flush">
                         <div class="list-group-item">Order ID: {{ $latestOrder->id }}</div>
                         <div class="list-group-item">Customer: {{ $latestOrder->customer->name }}</div>
                         <div class="list-group-item">Status:
+                            @if (Auth::user()->role === 'waiter' || Auth::user()->role === 'cashier')
                             <form action="{{route('orders.update', $latestOrder->id)}}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <select name="status" class="form-select">
+                                <select name="status" class="form-select" onchange="this.form.submit()">
                                     <option value="new" {{$latestOrder->status == 'new' ? 'selected' : ''}}>NEW</option>
                                     <option value="process" {{$latestOrder->status == 'process' ? 'selected' : ''}}>PROCESS</option>
                                     <option value="ready" {{$latestOrder->status == 'ready' ? 'selected' : ''}}>READY</option>
                                 </select>
                             </form>
+                            @else
+                            {{ Str::upper($latestOrder->status) }}
+                            @endif
                         </div>
                     </div>
                     <table class="table table-bordered mt-3">
@@ -88,25 +95,35 @@ $transaction = $latestOrder ? $latestOrder->transaction : null;
                                     @method('PATCH')
                                     <div class="list-group-item">
                                         Payment Status:
+                                        @if (Auth::user()->role === 'cashier')
                                         <select name="payment_status" class="form-select">
                                             <option value="pending" {{ $transaction->payment_status == 'pending' ? 'selected' : '' }}>PENDING</option>
                                             <option value="paid" {{ $transaction->payment_status == 'paid' ? 'selected' : '' }}>PAID</option>
                                         </select>
+                                        @else
+                                        {{ Str::upper($transaction->payment_status) }}
+                                        @endif
                                     </div>
 
                                     <div class="list-group-item">
                                         Payment Method:
+                                        @if (Auth::user()->role === 'cashier')
                                         <select name="payment_method" class="form-select">
                                             <option value="" >-- Select Payment Method --- </option>
                                             <option value="cash" {{ $transaction->payment_method == 'cash' ? 'selected' : '' }}>CASH</option>
                                             <option value="credit_card" {{ $transaction->payment_method == 'credit_card' ? 'selected' : '' }}>CREDIT CARD</option>
-                                            <option value="e_wallet" {{ $transaction->payment_method == 'e_wallet' ? 'selected' : '' }}>E-WALLET</option>
+                                            <option value="debit_card" {{ $transaction->payment_method == 'debit_card' ? 'selected' : '' }}>DEBIT CARD</option>
+                                            <option value="mobile" {{ $transaction->payment_method == 'mobile' ? 'selected' : '' }}>MOBILE</option>
                                         </select>
+                                        @else
+                                        {{ $transaction->payment_method ? Str::upper($transaction->payment_method) : 'N/A' }}
+                                        @endif
                                     </div>
-
+                                    @if (Auth::user()->role === 'cashier')
                                     <div class="mt-2">
                                         <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
                                     </div>
+                                    @endif
                                 </form>
                             </div>
                         </div>

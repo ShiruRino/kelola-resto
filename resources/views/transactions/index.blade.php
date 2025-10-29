@@ -22,7 +22,10 @@
                     <th scope="row">{{$loop->iteration}}</th>
                     <td>{{$i->order->id}}</td>
                     <td>{{$i->order->customer->name}}</td>
-                    <td>Rp{{number_format($i->total, 0, ',', '.')}}</td>
+                    <td>Rp{{ number_format($i->order->orderDetails->sum(function ($detail) {
+                            return $detail->product->price * $detail->quantity;
+                        }), 0, ',', '.') }}</td>
+
                     <td>
                         <form action="{{route('transactions.update',$i->id)}}" method="POST">
                             @csrf
@@ -51,6 +54,7 @@
                     </td>
                     <td class="d-flex flex-row flex-wrap" style="gap: 0.5rem;">
                         <a href="{{route('transactions.show', $i->id)}}" class="btn btn-primary btn-sm">Show</a>
+                        <a href="{{ route('transactions.receipt', $i->id) }}" class="btn btn-primary btn-sm">Print Receipt</a>
                         <form action="{{route('transactions.destroy', $i->id)}}" method="post" onsubmit="return confirm('Are you sure?')">
                             @csrf
                             @method('DELETE')

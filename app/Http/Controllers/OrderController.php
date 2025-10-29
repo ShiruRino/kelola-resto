@@ -54,6 +54,9 @@ class OrderController extends Controller
             return back()->withInput()->withErrors($validator);
         }
         $table = Table::where('table_number', $request->table_number)->firstOrFail();
+        if($table->status === 'unavailable'){
+            return back()->withInput()->with('error', 'That table is UNAVAILABLE right now.');
+        }
         $customer = Customer::where('phone', $request->customer_phone)->first();
         $order = Order::create([
             'table_id' => $table->id,

@@ -13,9 +13,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TransactionController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::middleware('auth')->group(function() {
@@ -28,10 +26,13 @@ Route::middleware('auth')->group(function() {
         return view('index', compact(['productCount', 'customerCount', 'orderCount', 'transactionCount']));
     })->name('index');
     Route::resource('customers', CustomerController::class);
-    Route::resource('products', ProductController::class);
-    Route::put('orders/{id}',[ OrderController::class, 'complete'])->name('orders.complete');
-    Route::resource('tables', TableController::class);
-    Route::resource('orders', OrderController::class);
+    Route::resource('products', ProductController::class)->middleware('role:admin,waiter');
+    Route::resource('tables', TableController::class)->only(['index', 'show', 'create','edit']);
+    Route::resource('tables', TableController::class)->only(['create','store','edit', 'update', 'destroy'])->middleware('role:admin');
+    Route::resource('orders', OrderController::class)->only(['index', 'show', 'create','edit']);
+    Route::resource('orders', OrderController::class)->only(['store', 'update', 'destroy'])->middleware('role:waiter,cashier');
     Route::resource('transactions', TransactionController::class);
     Route::resource('histories', HistoryController::class);
+    Route::get('/transactions/{orderId}/receipt', [TransactionController::class, 'generateReceipt'])->name('transactions.receipt');
+
 });
