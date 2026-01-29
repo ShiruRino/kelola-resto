@@ -17,7 +17,7 @@
                 <select class="form-select" name="gender">
                     <option value="">Select Gender</option>
                     <option value="0" {{old('gender') ? 'selected' : ''}}>Male</option>
-                    <option value="1" {{!old('gender') ? 'selected' : ''}}>Female</option>
+                    <option value="1" {{old('gender') ? 'selected' : ''}}>Female</option>
                 </select>
             </div>
             <div class="mb-3">

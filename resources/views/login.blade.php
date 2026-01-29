@@ -11,11 +11,6 @@
 <body>
     <div class="container">
         <div class="content d-flex flex-column align-items-center justify-content-center vh-100">
-            @if (session('error'))
-            <div class="alert alert-danger mb-5">
-                {{session('error')}}
-            </div>
-            @endif
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title text-center">Login</h3>
@@ -40,4 +35,21 @@
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    @if (session()->has('success'))
+        Swal.fire({
+            title: @json(session('success')),
+            icon: "success",
+            draggable: true
+        });
+    @endif
+    @if (session()->has('error'))
+        Swal.fire({
+            title: @json(session('error')),
+            icon: "error",
+            draggable: true
+        });
+        @endif
+</script>
 </html>

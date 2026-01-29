@@ -4,7 +4,7 @@
 <a href="{{route('customers.create')}}" class="btn btn-success mt-5 mb-4 btn-sm">Create</a>
 <div class="card mt-4 mb-5">
     <div class="card-header">Customers</div>
-    <div class="card-body">
+    <div class="card-body d-flex flex-wrap" style="overflow-x: scroll;">
         <table class="table">
             <thead>
                 <tr>
@@ -17,11 +17,11 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($customers as $customer)
+                @forelse ($customers as $customer)
                 <tr>
                     <th scope="row">{{ $loop->iteration }}</th>
                     <td>{{ $customer->name }}</td>
-                    <td>{{ !$customer->gender ? 'Male' : 'Female' }}</td>
+                    <td>{{ $customer->gender ? 'Male' : 'Female' }}</td>
                     <td>{{ $customer->phone }}</td>
                     <td>{{ $customer->address }}</td>
                     <td class="d-flex flex-row flex-wrap" style="gap: 0.5rem;">
@@ -33,7 +33,11 @@
                         </form>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="6" class="text-center">No customers found.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
         <div class="d-flex justify-content-center">

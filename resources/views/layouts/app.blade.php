@@ -96,21 +96,33 @@
 
     <!-- Main Content -->
     <main class="container">
-        @if (session('success'))
-            <div class="alert alert-success mb-4">{{ session('success') }}</div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger mb-4">{{ session('error') }}</div>
-        @endif
-
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                <div class="alert alert-danger mb-4">{{ $error }}</div>
-            @endforeach
-        @endif
         @yield('content')
     </main>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if(session()->has('success'))
+        Swal.fire({
+        title: @json(session('success')),
+        icon: "success",
+        draggable: true
+        });
+        @endif
+        @if (session()->has('error'))
+        Swal.fire({
+        title: @json(session('error')),
+        icon: "error",
+        draggable: true
+        });
+        @endif
+        @if ($errors->any())
+        Swal.fire({
+        title: @json($errors->first()) {{ session()->forget('errors') }},
+        icon: "error",
+        draggable: true
+        });
+        @endif
+    </script>
 </body>
 </html>

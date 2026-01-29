@@ -15,7 +15,7 @@
             <div class="mb-3">
                 <label for="gender" class="form-label">Gender</label>
                 <select class="form-select" name="gender">
-                    <option value="0" {{!$customer->gender ? 'selected' : ''}}>Male</option>
+                    <option value="0" {{$customer->gender ? 'selected' : ''}}>Male</option>
                     <option value="1" {{$customer->gender ? 'selected' : ''}}>Female</option>
                 </select>
             </div>

@@ -3,7 +3,7 @@
 @section('content')
     <div class="card mt-5">
         <div class="card-header">Activity Logs</div>
-        <div class="card-body">
+        <div class="card-body d-flex flex-wrap" style="overflow-x: scroll;">
             <table class="table">
                 <thead>
                     <tr>

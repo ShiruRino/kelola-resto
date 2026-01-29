@@ -3,7 +3,7 @@
 @section('content')
 <div class="card mt-5 mb-5">
     <div class="card-header">Transactions</div>
-    <div class="card-body">
+    <div class="card-body d-flex flex-wrap" style="overflow-x: scroll;">
         <table class="table">
             <thead>
                 <tr>
@@ -17,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($transactions as $i)
+                @forelse ($transactions as $i)
                 <tr>
                     <th scope="row">{{$loop->iteration}}</th>
                     <td>{{$i->order->id}}</td>
@@ -62,7 +62,11 @@
                         </form>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center">No transactions found.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

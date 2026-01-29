@@ -49,7 +49,7 @@ class AuthController extends Controller
             'record_id' => $user->id,
             'description' => 'User '.$user->username.' logged in',
         ]);
-        return redirect()->route('index')->with('success', 'Login Berhasil');
+        return redirect()->route('index')->with('success', 'Login Successful');
     }
     public function logout(Request $request){
         History::create([
@@ -62,7 +62,7 @@ class AuthController extends Controller
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerate();
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'Logout Successful');
     }
 
     /**

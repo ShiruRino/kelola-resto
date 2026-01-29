@@ -4,7 +4,7 @@
 <a href="{{route('products.create')}}" class="btn btn-success mt-5 mb-4 btn-sm">Create</a>
 <div class="card mt-4 mb-5">
     <div class="card-header">Products</div>
-    <div class="card-body">
+    <div class="card-body d-flex flex-wrap" style="overflow-x: scroll;">
         <table class="table">
             <thead>
                 <tr>
@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($products as $product)
+                @forelse ($products as $product)
                 <tr>
                     <th scope="row">{{ $loop->iteration }}</th>
                     <td>{{ $product->name }}</td>
@@ -29,7 +29,11 @@
                         </form>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="4" class="text-center">No products found.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
         <div class="d-flex justify-content-center">

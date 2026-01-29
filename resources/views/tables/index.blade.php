@@ -7,7 +7,7 @@
 
 <div class="card">
     <div class="card-header">Tables</div>
-    <div class="card-body">
+    <div class="card-body d-flex flex-wrap" style="overflow-x: scroll;">
         <table class="table">
             <thead>
                 <tr>
@@ -20,7 +20,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($tables as $i)
+                @forelse ($tables as $i)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $i->table_number }}</td>
@@ -78,7 +78,11 @@
                             @endif
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="6" class="text-center">No tables found.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
         <div class="d-flex justify-content-center">
